@@ -6,17 +6,6 @@
 
 ![Screenshot from 2023-07-07 18-33-33](https://github.com/KDesp73/A-Star-Algorithm/assets/63654361/304714bf-8073-47fe-a84c-41d2cce346dc)
 
-
-
-
-
-https://github.com/KDesp73/A-Star-Algorithm/assets/63654361/6bf92e04-5613-4b26-8395-2b66a4388d60
-
-
-
-
-
-
 ## Controls
 
 Press o, s, t to select obstacle, start, target respectively
