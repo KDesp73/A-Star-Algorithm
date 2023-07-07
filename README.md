@@ -9,9 +9,11 @@
 
 ## Controls
 
-- Left Click: Add obstacle
-- Right Click: Add the Start and Target points
-- R: Remove everything
+Press o, s, t to select obstacle, start, target respectively
+
+- Left Click: Add point
+- Right Click: Remove point
+- R: Reset board
 - Enter: Start the algorithm
 
 ## Author 
