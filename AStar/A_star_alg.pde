@@ -1,9 +1,12 @@
-// A* algorithm implementation //<>// //<>// //<>// //<>//
+// A* algorithm implementation //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>// //<>//
 //
 // ==Controls==
-// Left Click: Add obstacles
-// Right Click: Add start and target points
-// R: Remove start and target points
+//
+// Press o, s, t to select obstacle, start, target respectively
+//
+// Left Click: Add point
+// Right Click: Remove point
+// R: Reset board
 // Enter: Start the algorithm
 
 int width = 600;
@@ -20,6 +23,8 @@ int START = 0;
 int LINE = 1;
 int TARGET = 2;
 int WALL = 3;
+
+int selectedInput = WALL;
 
 Node startNode;
 Node targetNode;
@@ -86,30 +91,45 @@ void draw() {
     }
   }
 
-  if (keyPressed && key == 'r' || key == 'R') {
-    startPut = false;
-    targetPut = false;
+  if (keyPressed) {
+    switch(key) {
+    case 'r':
+    case 'R':
+      reset();
+      break;
 
-    for (int i=0; i < rows; i++) {
-      for (int j=0; j < cols; j++) {
-        cells[i][j] = -1;
-        nodes[i][j] = new Node(i, j);
-      }
+    case 'o':
+    case 'O':
+      selectedInput = WALL;
+      println("Obstacle Selected");
+      break;
+    case 's':
+    case 'S':
+      selectedInput = START;
+      println("Start Selected");
+      break;
+    case 't':
+    case 'T':
+      selectedInput = TARGET;
+      println("Target Selected");
+      break;
     }
-
-    openSet = new ArrayList<Node>();
-    closedSet = new ArrayList<Node>();
-/*
-    int[] startCoords = findValue(START);
-    int[] targetCoords = findValue(TARGET);
-
-    if (startCoords == null) return;
-    if (targetCoords == null) return;
-
-    cells[startCoords[0]][startCoords[1]] = -1;
-    cells[targetCoords[0]][targetCoords[1]] = -1;
-*/
   }
+}
+
+
+void reset() {
+  startPut = false;
+  targetPut = false;
+
+  for (int i=0; i < rows; i++) {
+    for (int j=0; j < cols; j++) {
+      cells[i][j] = -1;
+      nodes[i][j] = new Node(i, j);
+    }
+  }
+  openSet = new ArrayList<Node>();
+  closedSet = new ArrayList<Node>();
 }
 
 void A_star() {
@@ -209,7 +229,8 @@ void keyPressed() {
   }
 }
 
-void mouseClicked() {
+
+void mousePressed() {
   if (algorithmStarted) return;
 
   int xCellOver = int(map(mouseX, 0, width, 0, width/cellSize));
@@ -218,17 +239,15 @@ void mouseClicked() {
   yCellOver = constrain(yCellOver, 0, width/cellSize-1);
 
   if (mouseButton == LEFT) {
-    cells[xCellOver][yCellOver] = WALL;
-    nodes[xCellOver][yCellOver].obstacle = true;
-  } else if (mouseButton == RIGHT) {
-    if (targetPut) return;
+    if (selectedInput == START && startPut) return;
+    if (selectedInput == TARGET && targetPut) return;
 
-    if (!startPut) {
-      cells[xCellOver][yCellOver] = START;
+    if (selectedInput == WALL) {
+      nodes[xCellOver][yCellOver].obstacle = true;
+    } else if (selectedInput == START) {
       startNode = nodes[xCellOver][yCellOver];
       startPut = true;
-    } else {
-      cells[xCellOver][yCellOver] = TARGET;
+    } else if (selectedInput == TARGET) {
       targetNode = nodes[xCellOver][yCellOver];
 
       // Add the start node to the open set
@@ -239,11 +258,17 @@ void mouseClicked() {
 
       // Set the fScore of the start node to the heuristic value
       startNode.fScore = startNode.heuristic(targetNode);
-
       targetPut = true;
     }
+    cells[xCellOver][yCellOver] = selectedInput;
+  } else if (mouseButton == RIGHT) {
+    if (cells[xCellOver][yCellOver] == START) startPut = false;
+    if (cells[xCellOver][yCellOver] == TARGET) targetPut = false;
+    cells[xCellOver][yCellOver] = -1;
+    nodes[xCellOver][yCellOver].obstacle = false;
   }
 }
+
 
 int[] findValue(int value) {
   for (int i = 0; i < width / cellSize; i++) {
